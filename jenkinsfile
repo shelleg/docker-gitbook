@@ -33,33 +33,26 @@ pipeline
                 }
             }
         }
-    stage('Docker build')
-    {
-      steps
-      {
-          script
-                {
-                // Build the docker image using a Dockerfile
-                docker.build("$IMAGE")
-                // override the latest tag
-                docker.build("$IMAGE_LATEST")
-      		}
-	   }
+    stage('Docker build') {
+      steps {
+          script {
+                  // Build the docker image using a Dockerfile
+                  docker.build("$IMAGE")
+                  // override the latest tag
+                  docker.build("$IMAGE_LATEST")
+      		        }
+	          }
     }
     stage('Publish') {
-      when {
-        branch 'master'
-      }
       steps {
-          script
-                {
-                docker.withRegistry([ credentialsId: "dockerHub" ]) {
-              	// version eq latest git tag
-              	docker.image(IMAGE).push()
-              	// override the latest tag
-              	docker.image(IMAGE_LATEST).push()
-              	}
-            }
+          script {
+                  docker.withRegistry([ credentialsId: "dockerHub" ]){
+                	// version eq latest git tag
+                	docker.image(IMAGE).push()
+                	// override the latest tag
+                	docker.image(IMAGE_LATEST).push()
+                	}
+          }
       }
     }
   }
