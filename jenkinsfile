@@ -1,0 +1,53 @@
+pipeline {
+  agent
+    node {
+      label 'generic'
+         }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
+  environment
+    {
+        VERSION   = 'latest'
+        PROJECT   = 'shelleg/gitbook'
+        IMAGE     = "${PROJECT}/${VERSION}:latest"
+    }
+  stages {
+    stage('Build preparations')
+        {
+            steps
+            {
+                script
+                {
+                    // calculate GIT lastest commit short-hash
+                    gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    shortCommitHash = gitCommitHash.take(7)
+                    // calculate a sample version tag
+                    VERSION = shortCommitHash
+                    // set the build display name
+                    currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
+                    IMAGE = "$PROJECT:$VERSION"
+                    IMAGE_LATEST = "$PROJECT:latest"
+                }
+            }
+        }
+    stage('Build') {
+      steps {
+        docker.build("$IMAGE", .)
+      }
+    }
+    stage('Publish') {
+      when {
+        branch 'master'
+      }
+      steps {
+        withDockerRegistry([ credentialsId: "dockerHub", url: "" ]) {
+        // version eq latest git tag
+        docker.image(IMAGE).push()
+        // override the latest tag
+        docker.image(IMAGE_LATEST).push()
+        }
+      }
+    }
+  }
+}
