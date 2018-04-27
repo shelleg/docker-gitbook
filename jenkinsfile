@@ -33,7 +33,8 @@ pipeline {
         }
     stage('Build') {
       steps {
-        docker.build("$IMAGE", .)
+        docker.build("$IMAGE")
+        docker.build("$IMAGE_LATEST")
       }
     }
     stage('Publish') {
