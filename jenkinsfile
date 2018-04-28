@@ -3,10 +3,11 @@ pipeline
     options {
       buildDiscarder(logRotator(numToKeepStr: '5'))
     }
-    agent
+    agent {
       node {
         label 'generic'
         }
+    }
     environment
     {
         VERSION   = 'latest'
