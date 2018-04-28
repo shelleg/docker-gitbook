@@ -3,7 +3,7 @@ pipeline
     options {
       buildDiscarder(logRotator(numToKeepStr: '5'))
     }
-    agent {
+      agent {
       node {
         label 'generic'
         }
@@ -47,7 +47,7 @@ pipeline
     stage('Publish') {
       steps {
           script {
-                  docker.withRegistry([ credentialsId: "dockerHub" ]){
+                  docker.withRegistry('https://hub.docker.com', 'dockerHub'){
                 	// version eq latest git tag
                 	docker.image(IMAGE).push()
                 	// override the latest tag
