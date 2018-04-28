@@ -38,9 +38,9 @@ pipeline
       steps {
           script {
                   // Build the docker image using a Dockerfile
-                  def myImage = docker.build("$IMAGE")
+                  docker.build("$IMAGE")
                   // override the latest tag
-                  def myImageLatest = ("$IMAGE_LATEST")
+                  docker.build("$IMAGE_LATEST")
       		        }
 	          }
     }
@@ -49,9 +49,9 @@ pipeline
           script {
                   docker.withRegistry('https://hub.docker.com', 'dockerHub'){
                 	// version eq latest git tag
-                	myImage.push()
+                	docker.image("$IMAGE").push()
                 	// override the latest tag
-                	myImageLatest.push()
+                	docker.image("$IMAGE_LATEST").push()
                 	}
           }
       }
