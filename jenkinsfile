@@ -45,9 +45,9 @@ pipeline
 	          }
     }
     stage('Publish') {
-      steps {
+      steps
+      withDockerRegistry([ credentialsId: "dockerHub", url: "" ]){
           script {
-                  docker.withRegistry('https://hub.docker.com', 'dockerHub'){
                 	// version eq latest git tag
                 	docker.image("$IMAGE").push()
                 	// override the latest tag
