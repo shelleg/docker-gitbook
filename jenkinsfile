@@ -22,19 +22,19 @@ pipeline
         {
             steps
             {
-                // script
-                // {
-                //     // calculate GIT lastest commit short-hash
-                //     gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                //     shortCommitHash = gitCommitHash.take(7)
-                //     // calculate a sample version tag
-                //     VERSION = shortCommitHash
-                //     // set the build display name
-                //     currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
-                //     IMAGE = "$PROJECT:$VERSION"
-                //     IMAGE_LATEST = "$PROJECT:latest"
-                // }
-                buildprep(BUILD_ID,PROJECT)
+                script
+                {
+                    // // calculate GIT lastest commit short-hash
+                    // gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    // shortCommitHash = gitCommitHash.take(7)
+                    // // calculate a sample version tag
+                    // VERSION = shortCommitHash
+                    // // set the build display name
+                    // currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
+                    // IMAGE = "$PROJECT:$VERSION"
+                    // IMAGE_LATEST = "$PROJECT:latest"
+                }
+                IMAGE_LATEST = buildprep(BUILD_ID,PROJECT)
             }
         }
     stage('Docker build') {
