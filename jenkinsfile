@@ -1,3 +1,4 @@
+@Library('jenkins-pipeline-workshop-library') _
 pipeline
 {
     options {
@@ -16,6 +17,12 @@ pipeline
     }
     stages
     {
+		stage('Test stage')
+		{
+			steps {
+				sh "echo 'lets fail' && exit 55"
+			}
+		}
         stage('Build preparations')
         {
             steps
