@@ -23,7 +23,7 @@ pipeline
             {
                 script
                 {
-                    setup.call()
+                    setup()
                 }
             }
         }
