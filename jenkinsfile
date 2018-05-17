@@ -1,3 +1,4 @@
+@Library("jenkins-pipeline-workshop-library") _
 pipeline
 {
     options {
