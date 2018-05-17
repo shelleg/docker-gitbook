@@ -1,4 +1,4 @@
-@Library('jenkins-pipeline-workshop-library') _
+@Library('jenkins-pipeline-workshop-library@ivan') _
 pipeline
 {
     options {
@@ -20,6 +20,7 @@ pipeline
 		stage('Test stage')
 		{
 			steps {
+				stepTestStep('Sababa')
 				sh "echo 'lets fail' && exit 55"
 			}
 		}
