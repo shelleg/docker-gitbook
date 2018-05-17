@@ -1,0 +1,30 @@
+@Library ("jenkins-pipeline-workshop-library") _
+
+import jenkins.pipeline.workshop.library.dockerImageBuildAndPublish
+
+pipeline
+{
+    options {
+      buildDiscarder(logRotator(numToKeepStr: '5'))
+    }
+    agent {
+        node {
+            label 'generic'
+        }
+    }
+    environment
+    {
+        PROJECT = 'shelleg/gitbook'
+    }
+    stages
+    {
+        stage('Docker image build and publish') {
+            steps {
+                script {
+                    def builder = new dockerImageBuildAndPublish(this)
+                    builder.run()
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,41 @@
+@Library ("jenkins-pipeline-workshop-library") _
+
+pipeline
+{
+    options {
+      buildDiscarder(logRotator(numToKeepStr: '5'))
+    }
+    agent {
+        node {
+            label 'generic'
+        }
+    }
+    environment
+    {
+        PROJECT   = 'shelleg/gitbook'
+    }
+    stages
+    {
+        stage('Build preparations') {
+            steps {
+                script {
+                    dockerBuildPreparations()
+                }
+            }
+        }
+        stage('Docker build') {
+            steps {
+                script {
+                    dockerBuild()
+                }
+            }
+        }
+        stage('Publish') {
+            steps {
+                script {
+                    pushToDockerHub()
+                }
+            }
+        }
+    }
+}
