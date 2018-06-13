@@ -12,7 +12,7 @@ pipeline
     }
     environment
     {
-        PROJECT=yorammi/gitbook
+        PROJECT="yorammi/gitbook"
     }
     stages
     {
