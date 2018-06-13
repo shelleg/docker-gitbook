@@ -10,9 +10,9 @@ pipeline
             label 'generic'
          }
     }
-    parameters
+    environment
     {
-        string(name: 'PROJECT', defaultValue: 'shelleg/gitbook', description: 'name of image on Docker-hub')
+        PROJECT="shelleg/gitbook"
     }
     stages
     {
