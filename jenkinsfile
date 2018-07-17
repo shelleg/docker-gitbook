@@ -1,3 +1,4 @@
+@Library('jenkins-pipeline-workshop-library')
 pipeline
 {
     options {
@@ -20,6 +21,7 @@ pipeline
         {
             steps
             {
+                tplBuildPreparations()
                 script
                 {
                     // calculate GIT lastest commit short-hash
