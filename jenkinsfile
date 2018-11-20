@@ -1,69 +1,54 @@
-@Library('jenkins-pipeline-workshop-library')
-pipeline
-{
-    options {
-      buildDiscarder(logRotator(numToKeepStr: '5'))
-    }
-    agent 
-    {
-         node 
-         {
-            label 'generic'
+pipeline {
+  agent
+    node {
+      label 'generic'
          }
-    }
-    environment
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
+  environment
     {
-        PROJECT="shelleg/gitbook"
+        VERSION   = 'latest'
+        PROJECT   = 'shelleg/gitbook'
+        IMAGE     = "${PROJECT}/${VERSION}:latest"
     }
-    stages
-    {
-        stage('Build preparations')
+  stages {
+    stage('Build preparations')
         {
             steps
             {
-                tplBuildPreparations()
                 script
                 {
                     // calculate GIT lastest commit short-hash
                     gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
                     shortCommitHash = gitCommitHash.take(7)
                     // calculate a sample version tag
-                    env.VERSION = shortCommitHash
+                    VERSION = shortCommitHash
                     // set the build display name
                     currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
-                    env.IMAGE = "$PROJECT:$VERSION"
-                    env.IMAGE_LATEST = "$PROJECT:latest"
-               }
-           }
-       }
-       stage('Docker build') 
-       {
-          steps 
-	  {
-              script 
-	      {
-                    // Build the docker image using a Dockerfile
-                    docker.build("${env.IMAGE}")
-                    // override the latest tag
-                    docker.build("${env.IMAGE_LATEST}")
-              }
-	  }
+                    IMAGE = "$PROJECT:$VERSION"
+                    IMAGE_LATEST = "$PROJECT:latest"
+                }
+            }
         }
-        stage('Publish') 
-        {
-           steps 
-	   {
-              script 
-	      {
-                  docker.withRegistry("https://registry.hub.docker.com", "dockerHub")
-		  {
-                	// version eq latest git tag
-                	docker.image("${env.IMAGE}").push()
-                	// override the latest tag
-                	docker.image("${env.IMAGE_LATEST}").push()
-                  }
-              }
-           }
-        }
+    stage('Build') {
+      steps {
+        docker.build("$IMAGE")
+        docker.build("$IMAGE_LATEST")
+      }
     }
+    stage('Publish') {
+      when {
+        branch 'master'
+      }
+      steps {
+        withDockerRegistry([ credentialsId: "dockerHub", url: "" ]) {
+        // version eq latest git tag
+        docker.image(IMAGE).push()
+        // override the latest tag
+        docker.image(IMAGE_LATEST).push()
+        }
+      }
+    }
+  }
 }
